@@ -4,16 +4,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PearPhrase AI Web Reader</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background-color: #f4f4f9;
+/* Reset default margin and padding */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+ /* Initially hide the main buttons (iRead, iSummarize, iRecommend) */
+ #mainButtons, #filterButtons, #recommendationsContainer, #summaryContainer, #simplerBtnContainer, #inDepthBtnContainer  {
+      display: none;
     }
-    #container {
+    
+body {
+  font-family: 'Poppins', sans-serif; /* Clean, modern font */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #F4F4F9, #EBF3FF); /* Light gradient background */
+  color: #1B1F3B; /* Dark primary color for general text */
+}
+
+#container {
       text-align: center;
     }
     h1 {
@@ -21,6 +37,7 @@
     }
     .btn {
       padding: 10px 20px;
+      margin: 5px;
       background-color: #6200ea;
       color: white;
       border: none;
@@ -30,19 +47,260 @@
     }
     .btn:hover {
       background-color: #3700b3;
-    }
-  </style>
-</head>
-<body>
-  <div id="container">
-    <h1>Hello, this is PearPhrase!</h1>
-    <button class="btn" onclick="startReading()">Read Webpage</button>
-  </div>
+}
 
-  <script>
-    function startReading() {
-      alert("Reading webpage..."); // This is where your reading functionality will go
+   /* Hide the entire summary section initially */
+   #summaryContainer {
+      display: none;
+      margin-top: 20px;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      color: #333;
     }
-  </script>
-</body>
+
+    /* Hide the additional buttons initially */
+    #additionalButtons {
+      display: none;
+      margin-top: 10px;
+    }
+
+     /* Hide the recommendation section initially */
+     #recommendationsContainer, #filterButtons {
+      display: none;
+      margin-top: 20px;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      color: #333;
+    }
+
+    /* Tooltip container */
+    .tooltip-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    /* Tooltip text */
+    .tooltip-container .tooltip-text {
+      visibility: hidden;
+      width: 200px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      padding: 5px;
+      border-radius: 5px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%; /* Adjust for positioning */
+      left: 50%;
+      margin-left: -100px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    /* Show tooltip text when hovering */
+    .tooltip-container:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+   
+
+    /* Style for recommendation links */
+    .recommendation-link {
+      display: block;
+      margin-top: 5px;
+      text-decoration: none;
+      color: #1a73e8;
+    }
+
+    .recommendation-link:hover {
+      text-decoration: underline;
+    }
+
+      /* Simpler and In-Depth Button Containers */
+      #simplerBtnContainer, #inDepthBtnContainer {
+      margin-top: 20px;
+    }
+
+  </style>
+
+
+</head>
+
+<body>
+
+    <div id="container">
+      <h1>Hello, I'm PearPhrase</h1>
+  
+      <!-- Start button with tooltip -->
+      <div class="tooltip-container">
+        <button class="btn" id="startBtn">Start</button>
+        <span class="tooltip-text">GATHER the information from the website</span>
+      </div>
+  
+      <!-- Main buttons (initially hidden) -->
+      <div id="mainButtons">
+        <!-- iRead button with tooltip -->
+        <div class="tooltip-container">
+          <button class="btn" id="iRead">iRead</button>
+          <span class="tooltip-text">HEAR what the website says</span>
+        </div>
+  
+        <!-- iSummarize button with tooltip -->
+        <div class="tooltip-container">
+          <button class="btn" id="iSummarize">iSummarize</button>
+          <span class="tooltip-text">Get a SUMMARY of the text within the website</span>
+        </div>
+  
+        <!-- iRecommend button with tooltip -->
+        <div class="tooltip-container">
+          <button class="btn" id="iRecommend">iRecommend</button>
+          <span class="tooltip-text">Display RELATED and SIMILAR websites and articles</span>
+        </div>
+      </div>
+  
+      <!-- Filter Buttons for "Most Recent" and "Most Popular" (hidden initially) -->
+      <div id="filterButtons">
+        <div class="tooltip-container">
+          <button class="btn" id="mostRecentBtn">Most Recent</button>
+          <span class="tooltip-text">Get the most RECENT articles and updates.</span>
+        </div>
+        <div class="tooltip-container">
+          <button class="btn" id="mostPopularBtn">Most Popular</button>
+          <span class="tooltip-text">Get the highest RANKED articles and webpages.</span>
+        </div>
+      </div>
+      
+      <!-- Container to display recommendations -->
+      <div id="recommendationsContainer">
+        <h2>Recommended Articles and Webpages:</h2>
+        <div id="recommendationsList"></div> <!-- Links will be added here -->
+      </div>
+  
+      <!-- Container to display ChatGPT summary responses -->
+      <div id="summaryContainer">
+        <h2>Summary:</h2>
+        <p id="summaryText"></p> <!-- Summary will be displayed here -->
+      </div>
+  
+      <!-- Simpler and In-Depth Buttons -->
+      <div id="simplerBtnContainer" class="tooltip-container">
+        <button class="btn" id="simplerBtn">Simpler</button>
+        <span class="tooltip-text">Get a SIMPLER, easy-to-understand summary.</span>
+      </div>
+  
+      <div id="inDepthBtnContainer" class="tooltip-container">
+        <button class="btn" id="inDepthBtn">In-Depth</button>
+        <span class="tooltip-text">Get a more DETAILED summary.</span>
+      </div>
+  
+    </div>
+  
+    <script>
+      // Function to show the main buttons and hide the Start button
+      document.getElementById('startBtn').addEventListener('click', () => {
+        document.getElementById('startBtn').style.display = 'none';  // Hide the Start button
+        document.getElementById('mainButtons').style.display = 'block';  // Show the main buttons
+      });
+  
+      // Function to scrape the visible text from the webpage
+      function scrapeWebpageText() {
+        return document.body.innerText;  // Extract the visible text from the webpage
+      }
+  
+      // Function to send the scraped text to the ChatGPT API for summarization
+      async function sendTextToChatGPT(prompt, text) {
+        try {
+          const response = await fetch('http://localhost:4000/summarize', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ prompt: `${prompt}\n\n${text}` })  // Send the scraped text and the prompt to the backend
+          });
+          const data = await response.json();
+          return data.summary;  // Return the summarized text
+        } catch (error) {
+          console.error('Error communicating with ChatGPT:', error);
+          return 'Error generating summary.';
+        }
+      }
+  
+      // Event listener for the iSummarize button
+      document.getElementById('iSummarize').addEventListener('click', async () => {
+        const scrapedText = scrapeWebpageText();  // Scrape the visible text from the webpage
+        const summary = await sendTextToChatGPT("Summarize the content", scrapedText);  // Send it to ChatGPT for summarization
+        
+        // Display the summary on the screen
+        document.getElementById('summaryText').innerText = summary;
+        document.getElementById('summaryContainer').style.display = 'block';  // Show the summary container
+        document.getElementById('simplerBtnContainer').style.display = 'block';  // Show the Simpler button
+        document.getElementById('inDepthBtnContainer').style.display = 'block';  // Show the In-Depth button
+      });
+  
+      // Event listener for the Simpler button
+      document.getElementById('simplerBtn').addEventListener('click', async () => {
+        const scrapedText = scrapeWebpageText();  // Scrape the visible text from the webpage
+        const summary = await sendTextToChatGPT("Please provide a simpler, easy-to-understand summary", scrapedText);
+        
+        // Display the simpler summary
+        document.getElementById('summaryText').innerText = summary;
+        document.getElementById('summaryContainer').style.display = 'block';  // Show the summary container
+      });
+  
+      // Event listener for the In-Depth button
+      document.getElementById('inDepthBtn').addEventListener('click', async () => {
+        const scrapedText = scrapeWebpageText();  // Scrape the visible text from the webpage
+        const summary = await sendTextToChatGPT("Please provide a more detailed and intellectual summary", scrapedText);
+        
+        // Display the in-depth summary
+        document.getElementById('summaryText').innerText = summary;
+        document.getElementById('summaryContainer').style.display = 'block';  // Show the summary container
+      });
+  
+      // Event listener for the iRecommend button
+      document.getElementById('iRecommend').addEventListener('click', () => {
+        document.getElementById('filterButtons').style.display = 'block';  // Show the filter buttons
+      });
+  
+      // Event listener for the "Most Recent" button
+      document.getElementById('mostRecentBtn').addEventListener('click', async () => {
+        const scrapedText = scrapeWebpageText();  // Scrape the visible text from the webpage
+        const recommendations = await sendTextToChatGPT("Provide the most recent articles or updates", scrapedText);
+  
+        // Display the recommendations on the screen
+        displayRecommendations(recommendations);
+        document.getElementById('recommendationsContainer').style.display = 'block';  // Show the recommendations container
+        document.getElementById('filterButtons').style.display = 'none';  // Hide the filter buttons
+      });
+  
+      // Event listener for the "Most Popular" button
+      document.getElementById('mostPopularBtn').addEventListener('click', async () => {
+        const scrapedText = scrapeWebpageText();  // Scrape the visible text from the webpage
+        const recommendations = await sendTextToChatGPT("Provide the highest ranked articles or webpages", scrapedText);
+  
+        // Display the recommendations on the screen
+        displayRecommendations(recommendations);
+        document.getElementById('recommendationsContainer').style.display = 'block';  // Show the recommendations container
+        document.getElementById('filterButtons').style.display = 'none';  // Hide the filter buttons
+      });
+  
+      // Function to display recommendations
+      function displayRecommendations(recommendations) {
+        const recommendationsList = document.getElementById('recommendationsList');
+        recommendationsList.innerHTML = '';  // Clear previous recommendations
+  
+        recommendations.forEach(recommendation => {
+          const link = document.createElement('a');
+          link.href = recommendation.url;  // Assuming recommendation has a URL property
+          link.textContent = recommendation.title;  // Assuming recommendation has a title property
+          link.className = 'recommendation-link';
+          link.target = '_blank';  // Open links in a new tab
+          recommendationsList.appendChild(link);
+        });
+      }
+    </script>
+  
+  </body>
+
 </html>
+
