@@ -1,173 +1,200 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PearPhrase AI Web Reader</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PearPhrase AI Web Reader</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
 
-  <style>
-    /* Reset default margin and padding */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <style>
+      /* Reset default margin and padding */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-    /* Initially hide the main buttons (iRead, iSummarize, iRecommend) */
-    #mainButtons, #filterButtons, #recommendationsContainer, #summaryContainer, #simplerBtnContainer, #inDepthBtnContainer {
-      display: none;
-    }
+      /* Initially hide the main buttons (iRead, iSummarize, iRecommend) */
+      #mainButtons,
+      #filterButtons,
+      #recommendationsContainer,
+      #summaryContainer,
+      #simplerBtnContainer,
+      #inDepthBtnContainer {
+        display: none;
+      }
 
-    body {
-      font-family: 'Poppins', sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background: linear-gradient(135deg, #F4F4F9, #EBF3FF);
-      color: #1B1F3B;
-    }
+      body {
+        font-family: "Poppins", sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: linear-gradient(135deg, #f4f4f9, #ebf3ff);
+        color: #1b1f3b;
+      }
 
-    #container {
-      text-align: center;
-    }
+      #container {
+        text-align: center;
+      }
 
-    h1 {
-      color: #333;
-    }
+      h1 {
+        color: #333;
+      }
 
-    .btn {
-      padding: 10px 20px;
-      margin: 5px;
-      background-color: #6200ea;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
-    }
+      .btn {
+        padding: 10px 20px;
+        margin: 5px;
+        background-color: #6200ea;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+      }
 
-    .btn:hover {
-      background-color: #3700b3;
-    }
+      .btn:hover {
+        background-color: #3700b3;
+      }
 
-    /* Tooltip container */
-    .tooltip-container {
-      position: relative;
-      display: inline-block;
-    }
+      /* Tooltip container */
+      .tooltip-container {
+        position: relative;
+        display: inline-block;
+      }
 
-    /* Tooltip text */
-    .tooltip-container .tooltip-text {
-      visibility: hidden;
-      width: 200px;
-      background-color: #333;
-      color: #fff;
-      text-align: center;
-      padding: 5px;
-      border-radius: 5px;
-      position: absolute;
-      z-index: 1;
-      bottom: 125%;
-      left: 50%;
-      margin-left: -100px;
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
+      /* Tooltip text */
+      .tooltip-container .tooltip-text {
+        visibility: hidden;
+        width: 200px;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        padding: 5px;
+        border-radius: 5px;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        margin-left: -100px;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
 
-    /* Show tooltip text when hovering */
-    .tooltip-container:hover .tooltip-text {
-      visibility: visible;
-      opacity: 1;
-    }
+      /* Show tooltip text when hovering */
+      .tooltip-container:hover .tooltip-text {
+        visibility: visible;
+        opacity: 1;
+      }
 
-    /* Style for recommendation links */
-    .recommendation-link {
-      display: block;
-      margin-top: 5px;
-      text-decoration: none;
-      color: #1a73e8;
-    }
+      /* Style for recommendation links */
+      .recommendation-link {
+        display: block;
+        margin-top: 5px;
+        text-decoration: none;
+        color: #1a73e8;
+      }
 
-    .recommendation-link:hover {
-      text-decoration: underline;
-    }
+      .recommendation-link:hover {
+        text-decoration: underline;
+      }
 
-    /* Simpler and In-Depth Button Containers */
-    #simplerBtnContainer, #inDepthBtnContainer {
-      margin-top: 20px;
-    }
-  </style>
-</head>
+      /* Simpler and In-Depth Button Containers */
+      #simplerBtnContainer,
+      #inDepthBtnContainer {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
 
-<body>
-  <div id="container">
-    <h1>Hello, I'm PearPhrase</h1>
+  <body>
+    <div id="container">
+      <h1>Hello, I'm PearPhrase</h1>
 
-    <!-- Start button with tooltip -->
-    <div class="tooltip-container">
-      <button class="btn" id="startBtn">Start</button>
-      <span class="tooltip-text">Gather the information from the website</span>
-    </div>
-
-    <!-- Main buttons (initially hidden) -->
-    <div id="mainButtons">
+      <!-- Start button with tooltip -->
       <div class="tooltip-container">
-        <button class="btn" id="iRead">
-        <img src="/icons/1.png" id="playPauseIcon" style="width: 20px; height: 20px;"> iRead
-        </button>
-        <span class="tooltip-text">Hear what the website says</span>
+        <button class="btn" id="startBtn">Start</button>
+        <span class="tooltip-text"
+          >Gather the information from the website</span
+        >
       </div>
 
-      <div class="tooltip-container">
-        <button class="btn" id="iSummarize">iSummarize</button>
-        <span class="tooltip-text">Get a summary of the text within the website</span>
+      <!-- Main buttons (initially hidden) -->
+      <div id="mainButtons">
+        <div class="tooltip-container">
+          <button class="btn" id="iRead">
+            <img
+              src="./1.png"
+              id="playPauseIcon"
+              style="width: 20px; height: 20px; vertical-align: text-top"
+            />
+            iRead
+          </button>
+          <span class="tooltip-text">Hear what the website says</span>
+        </div>
+
+        <div class="tooltip-container">
+          <button class="btn" id="iSummarize">iSummarize</button>
+          <span class="tooltip-text"
+            >Get a summary of the text within the website</span
+          >
+        </div>
+
+        <div class="tooltip-container">
+          <button class="btn" id="iRecommend">iRecommend</button>
+          <span class="tooltip-text"
+            >Display related and similar websites and articles</span
+          >
+        </div>
       </div>
 
-      <div class="tooltip-container">
-        <button class="btn" id="iRecommend">iRecommend</button>
-        <span class="tooltip-text">Display related and similar websites and articles</span>
+      <!-- Filter Buttons for "Most Recent" and "Most Popular" (hidden initially) -->
+      <div id="filterButtons">
+        <div class="tooltip-container">
+          <button class="btn" id="mostRecentBtn">Most Recent</button>
+          <span class="tooltip-text"
+            >Get the most recent articles and updates.</span
+          >
+        </div>
+        <div class="tooltip-container">
+          <button class="btn" id="mostPopularBtn">Most Popular</button>
+          <span class="tooltip-text"
+            >Get the highest ranked articles and webpages.</span
+          >
+        </div>
+      </div>
+
+      <!-- Container to display recommendations -->
+      <div id="recommendationsContainer">
+        <h2>Recommended Articles and Webpages:</h2>
+        <div id="recommendationsList"></div>
+      </div>
+
+      <!-- Container to display ChatGPT summary responses -->
+      <div id="summaryContainer">
+        <h2>Summary:</h2>
+        <p id="summaryText"></p>
+      </div>
+
+      <!-- Simpler and In-Depth Buttons -->
+      <div id="simplerBtnContainer" class="tooltip-container">
+        <button class="btn" id="simplerBtn">Simpler</button>
+        <span class="tooltip-text"
+          >Get a simpler, easy-to-understand summary.</span
+        >
+      </div>
+
+      <div id="inDepthBtnContainer" class="tooltip-container">
+        <button class="btn" id="inDepthBtn">In-Depth</button>
+        <span class="tooltip-text"
+          >Get a more detailed and intellectual summary.</span
+        >
       </div>
     </div>
 
-    <!-- Filter Buttons for "Most Recent" and "Most Popular" (hidden initially) -->
-    <div id="filterButtons">
-      <div class="tooltip-container">
-        <button class="btn" id="mostRecentBtn">Most Recent</button>
-        <span class="tooltip-text">Get the most recent articles and updates.</span>
-      </div>
-      <div class="tooltip-container">
-        <button class="btn" id="mostPopularBtn">Most Popular</button>
-        <span class="tooltip-text">Get the highest ranked articles and webpages.</span>
-      </div>
-    </div>
-
-    <!-- Container to display recommendations -->
-    <div id="recommendationsContainer">
-      <h2>Recommended Articles and Webpages:</h2>
-      <div id="recommendationsList"></div>
-    </div>
-
-    <!-- Container to display ChatGPT summary responses -->
-    <div id="summaryContainer">
-      <h2>Summary:</h2>
-      <p id="summaryText"></p>
-    </div>
-
-    <!-- Simpler and In-Depth Buttons -->
-    <div id="simplerBtnContainer" class="tooltip-container">
-      <button class="btn" id="simplerBtn">Simpler</button>
-      <span class="tooltip-text">Get a simpler, easy-to-understand summary.</span>
-    </div>
-
-    <div id="inDepthBtnContainer" class="tooltip-container">
-      <button class="btn" id="inDepthBtn">In-Depth</button>
-      <span class="tooltip-text">Get a more detailed and intellectual summary.</span>
-    </div>
-  </div>
-
-  <script src="/popup.js"></script>
-</body>
-
+    <script src="/popup.js"></script>
+  </body>
 </html>
